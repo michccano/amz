@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+#myInput {
+  background-image: url('/css/searchicon.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+}
+
+#myTable th, #myTable td {
+  text-align: left;
+  padding: 12px;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+</style>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+  
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+{% block content %}
+<form method="POST" class="post-form" enctype="multipart/form-data">  
+  {% csrf_token %}  
+  {{ form.as_p }}  
+  <button type="submit" class="save btn btn-default">Save</button>  
+</form>  
+
+{% endblock %}
+
+<h2>Results</h2>
+
+
+<div id="accordion">
+
+  {% if method == "GET" %}
+
+  {% for data in data %}
+  {% if data.Original != None %}
+  {% if data.Original.ASIN != None %}
+  <div>
+  <div class="card">
+    <div class="card-header">
+      <a class="card-link" data-toggle="collapse" href="#collapseOne">
+        ASIN: {{data.Original.ASIN}}
+      </a>
+    </div>
+
+    <div id="collapseOne" class="collapse show" data-parent="#accordion">
+      <div class="card-body">
+    
+
+<table id="myTable">
+    <tr class="header">
+      <th style="width:60%;">BSR</th>
+      <th style="width:40%;">Image</th>
+    </tr>
+    <tr>
+        <td>{{data.Original.SellersRank}}</td>
+        <td><img width="50%" height="50%" src="{{data.Original.Image}}"></img></td>
+      </tr>
+  
+</table>
+
+
+
+
+<table id="myTable">
+  <tr class="header">
+
+    <th style="width:30%;">Seller Name</th>
+    <th style="width:10%;">Price</th>
+    <th style="width:10%;">Inventory in Stock</th>
+    <th>Fees</th>
+    <th >Competitive Pricing</th>
+  </tr>
+  <tr>
+    <td>{{data.Similar.SellersName}}</td>
+    <td>{{data.Similar.Price}}</td>
+    <td>{{data.Similar.Inventory}}</td>
+    <td>
+      <b><u>MFN Fees</u></b>
+      <br>
+      <b>Variable Closing</b>&nbsp;{{data.Similar.Fees.data.mfnFees.variableClosingFee.amount}}
+      <br>
+      <b>Fixed Closing</b>&nbsp;{{data.Similar.Fees.data.mfnFees.fixedClosingFee.amount}}
+      <br>
+      <b>Referral Fee</b>&nbsp;{{data.Similar.Fees.data.mfnFees.referralFee.amount}}
+     
+      <br>
+      <b><u>AFN Fees</u></b>
+      <br>
+      <b>Variable Closing</b>&nbsp;{{data.Similar.Fees.data.afnFees.variableClosingFee.amount}}
+      <br>
+      <b>Fixed Closing</b>&nbsp;{{data.Similar.Fees.data.afnFees.fixedClosingFee.amount}}
+      <br>
+      <b>Referral Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.referralFee.amount}}
+      <br>
+      <b>Storage Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.storageFee.amount}}
+      <br>
+      <b>Pick and Pack Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.pickAndPackFee.amount}}
+   
+    </td>
+
+  <td><a  data-toggle="modal" data-target="#myModal">View</a></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+</div>
+{%endif%}
+{%endif%}
+{%endfor%}
+
+{%endif%}
+
+
+</div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <table id="myTable">
+            <tr class="header">
+          
+              <th >Competitive Price ID</th>
+              <th >Price</th>
+              <th>Listing Price</th>
+              <th>Shipping</th>
+              <th >Landed Price</th>
+              <th >Number of Offer Listings</th>
+              <th >Sales Rankings</th>
+
+            </tr>
+
+              <tr>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing}}</td>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
+                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
+                <td>
+                  <b><u>Sales Rankings</u></b><br>
+                 {% for i in data.Similar.CompetitivePricing.Product.SalesRankings.SalesRank %}
+                  <b>Product Category Id</b>&nbsp;
+                  {{i.ProductCategoryId.value}}
+                <br>
+                <b>Rank</b>&nbsp;
+                {{i.Rank.value}}
+                <br><br>
+              {% endfor %}
+                </td>
+             
+              </tr>
+
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <div id="tmp" style="display:none;">
+    <div class="card">
+      <div class="card-header">
+        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+          Collapsible Group Item #1
+        </a>
+      </div>
+  
+      <div id="collapseOne" class="collapse show" data-parent="#accordion">
+        <div class="card-body">
+      
+  
+  <table id="myTable">
+      <tr class="header">
+        <th style="width:60%;">BSR</th>
+        <th style="width:40%;">Image</th>
+      </tr>
+      <tr>
+          <td>data.Original.SellersRank</td>
+          <td><img width="50%" height="50%" src="data.Original.Image"></img></td>
+        </tr>
+    
+  </table>
+  
+
+  <table id="myTable">
+    <tr class="header">
+  
+      <th style="width:30%;">Seller Name</th>
+      <th style="width:10%;">Price</th>
+      <th style="width:10%;">Inventory in Stock</th>
+      <th>Fees</th>
+      <th >Competitive Pricing</th>
+    </tr>
+    <tr>
+      <td>data.Similar.SellersName</td>
+      <td>data.Similar.Price</td>
+      <td>data.Similar.Inventory</td>
+      <td>
+        <b><u>MFN Fees</u></b>
+        <br>
+        <b>Variable Closing</b>&nbsp;data.Similar.Fees.data.mfnFees.variableClosingFee.amount
+        <br>
+        <b>Fixed Closing</b>&nbsp;data.Similar.Fees.data.mfnFees.fixedClosingFee.amount
+        <br>
+        <b>Referral Fee</b>&nbsp;data.Similar.Fees.data.mfnFees.referralFee.amount
+       
+        <br>
+        <b><u>AFN Fees</u></b>
+        <br>
+        <b>Variable Closing</b>&nbsp;data.Similar.Fees.data.afnFees.variableClosingFee.amount
+        <br>
+        <b>Fixed Closing</b>&nbsp;data.Similar.Fees.data.afnFees.fixedClosingFee.amount
+        <br>
+        <b>Referral Fee</b>&nbsp;data.Similar.Fees.data.afnFees.referralFee.amount
+        <br>
+        <b>Storage Fee</b>&nbsp;data.Similar.Fees.data.afnFees.storageFee.amount
+        <br>
+        <b>Pick and Pack Fee</b>&nbsp;data.Similar.Fees.data.afnFees.pickAndPackFee.amount
+     
+      </td>
+  
+    <td><a  data-toggle="modal" data-target="#myModal">View</a></td>
+  </tr>
+  
+  </table>
+  
+  </div>
+  
+  </div>
+  </div>
+
+
+
+
+
+
+
+  <script>
+
+    var aupcs = "{% if allUPCS is not None%} {{allUPCS}} {%endif%}";
+    aupcs = aupcs.replaceAll("&quot;","'").replaceAll(" ","");
+    var allUPCS = aupcs.split(",");
+    var pos = 0;
+  
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+
+
+   function getProduct(theupc){
+    
+
+    $.ajax({
+
+        url: "http://localhost:8000/GetProductInfo/",
+        method:"POST",
+       
+       data: {
+          'upc': theupc        
+          },
+
+        headers: {'X-CSRFToken': csrftoken},
+        
+        dataType: 'json',
+
+        success: function (data) {
+          
+          if(!jQuery.isEmptyObject(data.Original)){
+            $("#accordion").append(getOutput(data));
+          }
+
+          if(pos<allUPCS.length){
+          pos +=1;
+          getProduct(allUPCS[pos]);
+        }
+  
+        }
+      });
+
+   }
+
+
+   {% if method == "POST" %}
+  if(allUPCS.length>0){
+    getProduct(allUPCS[pos]);
+  }
+  {% endif %}
+  
+  function getOutput(data){
+    var htm = $("#tmp").html();
+
+    sellers_rank = "";
+    if(data.Original.SellersRank!=undefined){
+      sellers_rank = data.Original.SellersRank;
+    }
+
+    htm = htm.replace("data.Original.SellersRank",data.Original.SellersRank);
+
+    if(!jQuery.isEmptyObject(data.Similar)){
+    htm = htm.replace("data.Similar.SellersName",data.Similar.SellersName);
+    htm = htm.replace("data.Similar.Price",data.Similar.Price);
+    htm = htm.replace("data.Similar.Inventory",data.Similar.Inventory);
+    htm = htm.replace("data.Similar.Fees.data.mfnFees.variableClosingFee.amount",data.Similar.Fees.data.mfnFees.variableClosingFee.amount);
+    htm = htm.replace("data.Similar.Fees.data.mfnFees.fixedClosingFee.amount",data.Similar.Fees.data.mfnFees.fixedClosingFee.amount);
+    htm =  htm.replace("data.Similar.Fees.data.mfnFees.referralFee.amount",data.Similar.Fees.data.mfnFees.referralFee.amount);
+    htm = htm.relace("data.Similar.Fees.data.afnFees.variableClosingFee.amount",data.Similar.Fees.data.afnFees.variableClosingFee.amount);
+    htm = htm.relace("data.Similar.Fees.data.afnFees.fixedClosingFee.amount", data.Similar.Fees.data.afnFees.fixedClosingFee.amount);
+    htm = htm.replace("data.Similar.Fees.data.afnFees.referralFee.amount",data.Similar.Fees.data.afnFees.referralFee.amount);
+    htm = htm.replace("data.Similar.Fees.data.afnFees.storageFee.amount",data.Similar.Fees.data.afnFees.storageFee.amount);
+    htm = htm.replace("data.Similar.Fees.data.afnFees.pickAndPackFee.amount",data.Similar.Fees.data.afnFees.pickAndPackFee.amount);
+   
+    }
+
+
+    htm = htm.replace("data.Original.Image",data.Original.Image);
+
+    htm = htm.replace("#collapseOne","#"+data.Original.ASIN);
+    htm = htm.replace("collapseOne",data.Original.ASIN);
+    htm = htm.replace("Collapsible Group Item #1","ASIN: "+data.Original.ASIN);
+
+    return htm;
+  }
+
+  </script>
+
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+
+</body>
+</html>
