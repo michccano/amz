@@ -59,231 +59,10 @@
 
 <h2>Results</h2>
 
-
-<div id="accordion">
-
-  {% if method == "GET" %}
-
-  {% for data in data %}
-  {% if data.Original != None %}
-  {% if data.Original.ASIN != None %}
-  <div>
-  <div class="card">
-    <div class="card-header">
-      <a class="card-link" data-toggle="collapse" href="#collapseOne">
-        ASIN: {{data.Original.ASIN}}
-      </a>
-    </div>
-
-    <div id="collapseOne" class="collapse show" data-parent="#accordion">
-      <div class="card-body">
-    
-
-<table id="myTable">
-    <tr class="header">
-      <th style="width:60%;">BSR</th>
-      <th style="width:40%;">Image</th>
-    </tr>
-    <tr>
-        <td>{{data.Original.SellersRank}}</td>
-        <td><img width="50%" height="50%" src="{{data.Original.Image}}"></img></td>
-      </tr>
-  
-</table>
+<ul id="list"></ul>
 
 
-
-
-<table id="myTable">
-  <tr class="header">
-
-    <th style="width:30%;">Seller Name</th>
-    <th style="width:10%;">Price</th>
-    <th style="width:10%;">Inventory in Stock</th>
-    <th>Fees</th>
-    <th >Competitive Pricing</th>
-  </tr>
-  <tr>
-    <td>{{data.Similar.SellersName}}</td>
-    <td>{{data.Similar.Price}}</td>
-    <td>{{data.Similar.Inventory}}</td>
-    <td>
-      <b><u>MFN Fees</u></b>
-      <br>
-      <b>Variable Closing</b>&nbsp;{{data.Similar.Fees.data.mfnFees.variableClosingFee.amount}}
-      <br>
-      <b>Fixed Closing</b>&nbsp;{{data.Similar.Fees.data.mfnFees.fixedClosingFee.amount}}
-      <br>
-      <b>Referral Fee</b>&nbsp;{{data.Similar.Fees.data.mfnFees.referralFee.amount}}
-     
-      <br>
-      <b><u>AFN Fees</u></b>
-      <br>
-      <b>Variable Closing</b>&nbsp;{{data.Similar.Fees.data.afnFees.variableClosingFee.amount}}
-      <br>
-      <b>Fixed Closing</b>&nbsp;{{data.Similar.Fees.data.afnFees.fixedClosingFee.amount}}
-      <br>
-      <b>Referral Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.referralFee.amount}}
-      <br>
-      <b>Storage Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.storageFee.amount}}
-      <br>
-      <b>Pick and Pack Fee</b>&nbsp;{{data.Similar.Fees.data.afnFees.pickAndPackFee.amount}}
-   
-    </td>
-
-  <td><a  data-toggle="modal" data-target="#myModal">View</a></td>
-</tr>
-
-</table>
-
-</div>
-
-</div>
-</div>
-{%endif%}
-{%endif%}
-{%endfor%}
-
-{%endif%}
-
-
-</div>
-
-
-
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
-        </div>
-        <div class="modal-body">
-          <table id="myTable">
-            <tr class="header">
-          
-              <th >Competitive Price ID</th>
-              <th >Price</th>
-              <th>Listing Price</th>
-              <th>Shipping</th>
-              <th >Landed Price</th>
-              <th >Number of Offer Listings</th>
-              <th >Sales Rankings</th>
-
-            </tr>
-
-              <tr>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing}}</td>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
-                <td>{{data.Similar.CompetitivePricing.Product.CompetitivePricing.CompetitivePrices}}</td>
-                <td>
-                  <b><u>Sales Rankings</u></b><br>
-                 {% for i in data.Similar.CompetitivePricing.Product.SalesRankings.SalesRank %}
-                  <b>Product Category Id</b>&nbsp;
-                  {{i.ProductCategoryId.value}}
-                <br>
-                <b>Rank</b>&nbsp;
-                {{i.Rank.value}}
-                <br><br>
-              {% endfor %}
-                </td>
-             
-              </tr>
-
-            </table>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-  <div id="tmp" style="display:none;">
-    <div class="card">
-      <div class="card-header">
-        <a class="card-link" data-toggle="collapse" href="#collapseOne">
-          Collapsible Group Item #1
-        </a>
-      </div>
-  
-      <div id="collapseOne" class="collapse show" data-parent="#accordion">
-        <div class="card-body">
-      
-  
-  <table id="myTable">
-      <tr class="header">
-        <th style="width:60%;">BSR</th>
-        <th style="width:40%;">Image</th>
-      </tr>
-      <tr>
-          <td>data.Original.SellersRank</td>
-          <td><img width="50%" height="50%" src="data.Original.Image"></img></td>
-        </tr>
-    
-  </table>
-  
-
-  <table id="myTable">
-    <tr class="header">
-  
-      <th style="width:30%;">Seller Name</th>
-      <th style="width:10%;">Price</th>
-      <th style="width:10%;">Inventory in Stock</th>
-      <th>Fees</th>
-      <th >Competitive Pricing</th>
-    </tr>
-    <tr>
-      <td>data.Similar.SellersName</td>
-      <td>data.Similar.Price</td>
-      <td>data.Similar.Inventory</td>
-      <td>
-        <b><u>MFN Fees</u></b>
-        <br>
-        <b>Variable Closing</b>&nbsp;data.Similar.Fees.data.mfnFees.variableClosingFee.amount
-        <br>
-        <b>Fixed Closing</b>&nbsp;data.Similar.Fees.data.mfnFees.fixedClosingFee.amount
-        <br>
-        <b>Referral Fee</b>&nbsp;data.Similar.Fees.data.mfnFees.referralFee.amount
-       
-        <br>
-        <b><u>AFN Fees</u></b>
-        <br>
-        <b>Variable Closing</b>&nbsp;data.Similar.Fees.data.afnFees.variableClosingFee.amount
-        <br>
-        <b>Fixed Closing</b>&nbsp;data.Similar.Fees.data.afnFees.fixedClosingFee.amount
-        <br>
-        <b>Referral Fee</b>&nbsp;data.Similar.Fees.data.afnFees.referralFee.amount
-        <br>
-        <b>Storage Fee</b>&nbsp;data.Similar.Fees.data.afnFees.storageFee.amount
-        <br>
-        <b>Pick and Pack Fee</b>&nbsp;data.Similar.Fees.data.afnFees.pickAndPackFee.amount
-     
-      </td>
-  
-    <td><a  data-toggle="modal" data-target="#myModal">View</a></td>
-  </tr>
-  
-  </table>
-  
-  </div>
-  
-  </div>
-  </div>
-
-
-
-
-
-
+</body>
 
   <script>
 
@@ -296,8 +75,7 @@
 
 
 
-   function getProduct(theupc){
-    
+   function getProduct(){
 
     $.ajax({
 
@@ -305,7 +83,7 @@
         method:"POST",
        
        data: {
-          'upc': theupc        
+          'upc': ''       
           },
 
         headers: {'X-CSRFToken': csrftoken},
@@ -314,28 +92,31 @@
 
         success: function (data) {
           
-          if(!jQuery.isEmptyObject(data.Original)){
-            $("#accordion").append(getOutput(data));
+          $("#list").html("");
+           for(var i=0; i<data.length; i++){
+            if(!jQuery.isEmptyObject(data[i].Original)){
+             $("#list").append("<li><a href=http://localhost:8000/GetProduct/"+i+">"+data[i].Original.ASIN+"</a></li>");
+           }
           }
 
-          if(pos<allUPCS.length){
-          pos +=1;
-          getProduct(allUPCS[pos]);
-        }
   
         }
       });
 
    }
 
+   setInterval(getProduct,6000);
 
    {% if method == "POST" %}
   if(allUPCS.length>0){
-    getProduct(allUPCS[pos]);
+   
   }
   {% endif %}
   
+
+
   function getOutput(data){
+
     var htm = $("#tmp").html();
 
     sellers_rank = "";

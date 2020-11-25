@@ -70,8 +70,17 @@ class MyOwnView(APIView):
 @require_http_methods(["POST"])    
 def send_json(request):
   
-    data = mysite.helpers.GetProductFromJS(request.POST.get("upc").replace("'",""))
+    #data = mysite.helpers.GetProductFromJS(request.POST.get("upc").replace("'",""))
+    data = mysite.helpers.GetProductResults(request.META.get("REMOTE_ADDR"))
     return JsonResponse(data, safe=False)
+
+
+@require_http_methods(["GET"])    
+def getproduct(request,id):
+    data = mysite.helpers.GetProductData(id,request.META.get("REMOTE_ADDR"))
+    return render(request,"index-0.1.1.html",data)  
+
+
 
 
 
@@ -98,7 +107,7 @@ def index(request,asin):
         student = StudentForm()  
         session = requests.Session()
         session.auth = ("admin", "123wet123")
-
+        data = {}
         #data = mysite.helpers.RetrieveProducts()
         data = mysite.helpers.GetProduct(asin)
 
@@ -118,5 +127,5 @@ def index(request,asin):
 
     template = loader.get_template('index-0.1.1.html') # getting our template  
     
-    return render(request,"index-0.1.1.html",thedata)  
+    return render(request,"test.html",thedata)  
     #return HttpResponse(template.render(thedata))       # rendering the template in HttpResponse  

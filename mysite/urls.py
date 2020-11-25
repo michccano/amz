@@ -15,7 +15,11 @@ urlpatterns = [
    path('', include(router.urls)),
    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
    
-   path('test/<str:asin>', views.index),  
+   path('test/<str:asin>', views.index), 
+
+
+   path('GetProduct/<int:id>', views.getproduct), 
+    
    path('GetProductInfo/', views.send_json, name='send_json'),
 
    path('snippets/', login_required(views.YourView.as_view()), name='my_rest_view'),

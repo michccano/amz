@@ -65,7 +65,7 @@ def ListProducts(query):
     response = api.list_matching_products(marketplaceid="ATVPDKIKX0DER",query=query)
     print(response.parsed)
 
-
+import os.path
 
 
 def GetProductInfo(asin,parsed,show):
@@ -77,7 +77,15 @@ def GetProductInfo(asin,parsed,show):
         region=region,  
     )
 
+    print("######")
+    if os.path.exists('./1.txt'):
+        print("ASDASDASD")
+    else:
+        f = open("./1.txt", "a")
+        f.write(parsed.Product)
+        f.close()
 
+        print(parsed.Product)
   
     height = parsed.Product.AttributeSets.ItemAttributes.ItemDimensions.Height.value
     weight = parsed.Product.AttributeSets.ItemAttributes.ItemDimensions.Weight.value
@@ -92,8 +100,6 @@ def GetProductInfo(asin,parsed,show):
     fulfillment = api.get_my_price_for_asin(marketplaceid="ATVPDKIKX0DER",asins=asin)
     result = api.get_competitive_pricing_for_asin(marketplaceid="ATVPDKIKX0DER",asins=asin)
 
-    print("HERE")
-    print(result.parsed)
 
     parseInfo(asin)
 
@@ -176,25 +182,35 @@ def GetProduct(asin):
         region=region,  
     )
 
-#https://www.onlinejobs.ph/jobseekers/job/470624
-#https://www.onlinejobs.ph/jobseekers/job/470512
+    #https://www.onlinejobs.ph/jobseekers/job/470624
+    #https://www.onlinejobs.ph/jobseekers/job/470512
 
     api._use_feature_mwsresponse = True
 
     #result = api.get_competitive_pricing_for_asin(marketplaceid="ATVPDKIKX0DER",asins=asin)
     #return result.parsed
     tmp = api.list_matching_products(marketplaceid="ATVPDKIKX0DER",query="017754398666")
-    print("@3333")
-    print(tmp.parsed)
+   
+    #print(tmp.parsed)
     
     response1 = api.get_lowest_offer_listings_for_asin(marketplaceid="ATVPDKIKX0DER",asins=asin)
     response = api.get_matching_product(marketplaceid="ATVPDKIKX0DER",asins=asin)
 
     print("@#@#")
-    print(response1.parsed.Product.LowestOfferListings.LowestOfferListing[0])
-    test = response.parsed.Product.Relationships.VariationParent.Identifiers.MarketplaceASIN.ASIN
 
-    return {'Original':GetProductInfo(asin,response.parsed,True),'Similar':GetProductInfo(test,response.parsed,False),'Data':tmp.parsed}
+
+  
+    #print(response.parsed)
+
+    test= {}
+    similar = {}
+    try:
+        test = response.parsed.Product.Relationships.VariationParent.Identifiers.MarketplaceASIN.ASIN
+        similar = GetProductInfo(test,response.parsed,False)
+    except:
+        print("DDDDD")
+
+    return {'Original':GetProductInfo(asin,response.parsed,True),'Similar':similar,'Data':tmp.parsed}
        
 
 
@@ -226,6 +242,9 @@ def GetProductFromJS(upc):
     Similar = []
     response = ""
     tmp  = ""
+    data = {}
+    fba = 0
+    merch = 0
 
     try:
 
@@ -235,7 +254,16 @@ def GetProductFromJS(upc):
     
         response = api.get_matching_product(marketplaceid="ATVPDKIKX0DER",asins=the_asin)
 
-        
+        response1 = api.get_lowest_offer_listings_for_asin(marketplaceid="ATVPDKIKX0DER",asins=the_asin)
+
+     
+
+        for i in range(0,len(response1.parsed.Product.LowestOfferListings.LowestOfferListing)):
+            if "Amazon" in response1.parsed.Product.LowestOfferListings.LowestOfferListing[i].Qualifiers.FulfillmentChannel:
+                fba += 1
+            else:
+                merch +=1
+
         Original = GetProductInfo(the_asin,response.parsed,True)
 
 
@@ -250,15 +278,40 @@ def GetProductFromJS(upc):
         test = response.parsed.Product.Relationships.VariationParent.Identifiers.MarketplaceASIN.ASIN
        
         Similar = GetProductInfo(test,response.parsed,False)
+        
     
     except Exception as ee:
         print(ee)
 
 
 
-    return {'Original':Original,'Similar':Similar,'Data':{}}
+    return {'Original':Original,'Similar':Similar,'Data':{'FBA':fba,'Merchant':merch}}
        
-       
+
+
+def GetProductData(id,ip):
+    dblist = myclient.list_database_names()
+    if "amazon" in dblist:
+        print("The database exists.")
+    myquery = { "ip": ip }
+
+    mydoc = mycol.find_one(myquery)
+
+    return mydoc["results"][id]
+
+
+
+
+def GetProductResults(ip):
+    dblist = myclient.list_database_names()
+    if "amazon" in dblist:
+        print("The database exists.")
+    myquery = { "ip": ip }
+
+    mydoc = mycol.find_one(myquery)
+    #print(mydoc["results"])
+    return mydoc["results"]
+
 
 
 
@@ -279,29 +332,37 @@ def handle_uploaded_file(f,ip):
     ws = wb.active
 
     allUPCS = ""
+    data = {}
+
     for i in range(2,len(ws['C'])):
         try:
-            print("HERE "+str(ip))
+            
             data = GetProductFromJS(ws['C'+str(i)].value)
-            myquery = { "ip": ip }
 
-            mydoc = mycol.find_one(myquery)
-
-            if len(list(mydoc))>0:
-                print("FROM MONGO")
-                mycol.update(myquery, {'$push': {'results': data}})
-                #mydoc["results"].insert_one(data)
-                print(mydoc)
-            if mydoc == None:
-                print("TRYING TO ADD")
-                mycol.insert_one({"ip":ip,"results":[]})
+          
             
         except Exception as ee:
             print(ee)
-    #allUPCS = allUPCS[:-1]
+        
 
+        myquery = { "ip": ip }
 
+        mydoc = mycol.find_one(myquery)
+        print("HERE>>>>")
+        #print(mydoc)
 
+        if mydoc == None:
+            print("TRYING TO ADD")
+            mycol.insert_one({"ip":ip,"results":[]})
+
+        else:
+            print("FROM MONGO")
+            mycol.update(myquery, {'$push': {'results': data}})
+            #mydoc["results"].insert_one(data)
+            #print(mydoc)
+
+   
+ 
 
     return allUPCS
 

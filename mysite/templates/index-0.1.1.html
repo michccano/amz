@@ -43,7 +43,8 @@
             <div class="col-lg-4">
                <div class="pic text-center">
                 <h4></h4>
-                <img src="{{data.Original.Image}}"/>
+                <img src="{{Original.Image}}" width="100%" height="100%"/>
+           
                </div>
             </div>
       
@@ -53,7 +54,7 @@
                         <div class="col-lg-12">
                             <h6>
                                 <a href="" class="text-muted">
-                                   ASIN: {{data.Original.ASIN}}
+                                   ASIN: {{Original.ASIN}}
                                 </a>
                             </h6>
                             <!-- heading of product -->
@@ -71,12 +72,12 @@
                                 <tbody>
                                 <tr>
                                     <th scope="row">Current Price</th>
-                                    <td><h6 class="text-primary">{{data.Original.Price}}</h6></td>
+                                    <td><h6 class="text-primary">{{Original.Price}}</h6></td>
                                     <td><button class="btn btn-info btn-sm"> Checkout</button></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Current Sales Ranking</th>
-                                    <td> <h6 class="text-success">{{data.Original.SellerRank}}</h6> </td>
+                                    <td> <h6 class="text-success">{{Original.SellerRank}}</h6> </td>
                                     <td><button class="btn btn-warning btn-sm"> Checkout</button></td>
                                 </tr>
                                 <tr>
@@ -109,7 +110,7 @@
                             <h6>
                              FBA Sellers
                              <a href="" class="ml-2 text-primary"> 
-                                 3
+                                 {{Data.FBA}}
                              </a>
                             </h6>
                          </div>
@@ -117,7 +118,7 @@
                             <h6>
                              MF Sellers
                              <a href="" class="ml-2 text-primary"> 
-                               2
+                              {{Data.Merchant}}
                              </a>
                             </h6>
                          </div>

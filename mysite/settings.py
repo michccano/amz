@@ -26,13 +26,14 @@ SECRET_KEY = '$cba*1s^ac$c-%#io0o%w=mhmgmeb+hwty70*imft!g0gclr5r'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool (int(os.environ.get('DEBUG',1)))
 
-ALLOWED_HOSTS = ['ec2-3-89-217-209.compute-1.amazonaws.com', '127.0.0.1']
+ALLOWED_HOSTS = ['ec2-3-89-217-209.compute-1.amazonaws.com', '127.0.0.1','localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -46,6 +47,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
